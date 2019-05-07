@@ -3,9 +3,8 @@
 #include"controller.h"
 #include<stdio.h>
 #include<stdlib.h>
-Rider *rid;//定义骑手结构体数组 
-Menu *menu;//定义订单结构体数组 
-int money=1000;
+//定义骑手结构体数组 在controller中定义了 
+//定义订单结构体数组 
 Menu* creatmenulist(int rid){//初始化链表 
 	Menu *head;
 	head=(Menu*)malloc(sizeof(Menu));
@@ -17,12 +16,18 @@ Menu* creatmenulist(int rid){//初始化链表
 	head->nextmenu=NULL;
 	return head;
 }
-void addmenulist(){//添加订单 
-	
+void addmenulist(int A,Menu *object){//添加订单 
+	Menu *current=Rider[A].nextmenuptr;
+	while(current->nextmenu!=NULL){//移动指针指向链表最后一个 
+		current=current->nextmenu;
+	}
+	current->nextmenu=object;//将订单加入链表 
+	current=current->nextmenu;
+	current->nextmenu=NULL;
 }
-int buyrider(Rider rid[],int *money){//买骑手
+int buyrider(){//买骑手
 	int i;
-	if(*money>=300){
+	if(money>=300){
 		for(i=0;rid[i].exist==1;i++){};//判断哪些骑手存在
 		rid=(Rider*)realloc(rid,(i+1)*sizeof(Rider)); 
 		rid[i].exist=1;
@@ -30,16 +35,16 @@ int buyrider(Rider rid[],int *money){//买骑手
 			rid[0].nextmenuptr=creatmenulist(0);
 			rid[i].nextmenuptr=creatmenulist(i);
 		}
-		else{
+		else{ 
 			rid[i].nextmenuptr=creatmenulist(i);
 		}
-		*money=*money-300;
+		money=money-300;
 		return i; 
 	}
 	else
 		return -1;
 }
-void performance(Rider rid[]){
+void performance(){
 	int i;
 	for(i=0;rid[i].exist!=0;i++){
 		printf("%d号骑手接单数%d\n",i,rid[i].receive);
@@ -49,7 +54,7 @@ void performance(Rider rid[]){
 	}
 }
 
-Rider allocatemenu(Menu a,Rider rid[],int *money){ //分配订单函数 
+void allocatemenu(Menu *object){ //分配订单函数 
 	int i,mintime,minrider;
 	//用路径函数确定时间 
 	mintime=rid[0].t1;
@@ -61,13 +66,14 @@ Rider allocatemenu(Menu a,Rider rid[],int *money){ //分配订单函数
 		}
 	}	
 	int newrider;
-	if(mintime>=30){
-		newrider=buyrider(rid,(int*)&money);
+	if(mintime>=30){//如果都现有骑手都超时 
+		newrider=buyrider(rid);//买一个新骑手 
 		if(newrider!=-1)
-			return rid[newrider]; 
-		else return rid[minrider];
+			addmenulist(newrider,object); 
+		else  
+			addmenulist(rid[minrider],object);//钱不够，返回时间最少的那个骑手 
 	}
 	else{
-		return rid[minrider];
+		addmenulist(rid[minrider],object);
 	}
 }
