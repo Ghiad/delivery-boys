@@ -4,14 +4,14 @@
 CPP      = g++.exe -D__DEBUG__
 CC       = gcc.exe -D__DEBUG__
 WINDRES  = windres.exe
-OBJ      = main.o rider.o
-LINKOBJ  = main.o rider.o
-LIBS     = -L"D:/Dev-Cpp/MinGW64/lib" -L"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -g3
+OBJ      = main.o menu.o point.o controller.o message.o rider.o tools.o
+LINKOBJ  = main.o menu.o point.o controller.o message.o rider.o tools.o
+LIBS     = -L"D:/Dev-Cpp/MinGW64/lib" -L"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -g3 -g3
 INCS     = -I"D:/Dev-Cpp/MinGW64/include" -I"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"D:/Dev-Cpp/MinGW64/include" -I"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
 BIN      = Project1.exe
-CXXFLAGS = $(CXXINCS) -g3
-CFLAGS   = $(INCS) -g3
+CXXFLAGS = $(CXXINCS) -g3 -g3
+CFLAGS   = $(INCS) -g3 -g3
 RM       = rm.exe -f
 
 .PHONY: all all-before all-after clean clean-custom
@@ -27,5 +27,20 @@ $(BIN): $(OBJ)
 main.o: main.cpp
 	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
 
+menu.o: menu.cpp
+	$(CPP) -c menu.cpp -o menu.o $(CXXFLAGS)
+
+point.o: point.cpp
+	$(CPP) -c point.cpp -o point.o $(CXXFLAGS)
+
+controller.o: controller.cpp
+	$(CPP) -c controller.cpp -o controller.o $(CXXFLAGS)
+
+message.o: message.cpp
+	$(CPP) -c message.cpp -o message.o $(CXXFLAGS)
+
 rider.o: rider.cpp
 	$(CPP) -c rider.cpp -o rider.o $(CXXFLAGS)
+
+tools.o: tools.cpp
+	$(CPP) -c tools.cpp -o tools.o $(CXXFLAGS)
