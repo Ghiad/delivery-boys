@@ -1,6 +1,5 @@
 #include"rider.h"
 #include"menu.h"
-//#include"message.h"
 #include"controller.h"
 #include<stdio.h>
 #include<stdlib.h>
@@ -14,33 +13,34 @@ Menu* creatmenulist(){//初始化链表
 		printf("内存不够，应终止程序"); 
 		return head;
 	} 
-	head->waitlist=NULL;
+	head->nextmenu=NULL;
 	return head;
 }
 
 void addmenulist(int A,int object){//添加订单 
-	Menu *current=Rider[A].nextmenuptr;
+	Menu *current=Rider[A].waitlist;
 	while(current->nextmenu!=NULL){//移动指针指向链表最后一个 
-		current=current->waitlist;
+		current=current->nextmenu;
 	}
-	current->waitlist=&Menu[object];//将订单加入链表 
-	current=current->waitlist;
-	current->waitlist=NULL;
+	current->nextmenu=&Menu[object];//将订单加入链表
+	current=current->nextmenu;
+	current->nextmenu=(Menu*)malloc(sizeof(Menu));//开创新的空间 
+	current->nextmenu=NULL;
 }
 
 void buyrider(){//买骑手
 	int i;
-	if(money>=400){
-		for(i=0;rid[i].exist==1;i++){};//判断哪些骑手存在
-		rid=(Rider*)realloc(rid,(i+2)*sizeof(Rider)); 
-		rid[i].exist=1;
-		rid[i+1].exist=0;
+	while(money>=400){//大于400是为了留一段缓冲，防止买完骑手没钱导致破产 
+		for(i=0;rider[i].exist==1;i++){};//判断哪些骑手存在
+		rider=(Rider*)realloc(rider,(i+2)*sizeof(Rider)); 
+		rider[i].exist=1;
+		rider[i+1].exist=0;
 		if(i==1){//初始化,使nextmenuptr成为每个骑手订单链表的头指针 
-			rid[0].waitlist=creatmenulist();
-			rid[i].waitlist=creatmenulist();
+			rider[0].waitlist=creatmenulist();
+			rider[i].waitlist=creatmenulist();
 		}
 		else{ 
-			rid[i].waitlist=creatmenulist();
+			rider[i].waitlist=creatmenulist();
 		}
 		money=money-300;
 	}
@@ -48,33 +48,48 @@ void buyrider(){//买骑手
 
 void allocatemenu(int object){ //分配订单函数 
 	int i,mintime,minrider;
-	//用路径函数确定时间 
-	mintime=rid[0].t1;//此处应该为确定的时间，暂用这个代替 
+	CalculatePath(&menu[object]);//参数应该加入骑手 
+	mintime=rider[0].t1;//此处应该为确定的时间，暂用这个代替 
 	minrider=0;
-	for(i=0;rid[i].exist!=0;i++){
-		if(rid[i].t1<mintime){
-		 	mintime=rid[i].t1;
+	for(i=0;rider[i].exist!=0;i++){
+		if(rider[i].t1<mintime){
+		 	mintime=rider[i].t1;
 		 	minrider=i;
 		}
-	}	
+	}
+	menu(object).p=&rider[minrider];//明确订单被分配到那个骑手 
+	menu(object).underline=minrider; 
 	addmenulist(minrider,object);
 }
 
 void performance(){
 	int i;
-	for(i=0;rid[i].exist!=0;i++){
+	for(i=0;rider[i].exist!=0;i++){
 		printf("%d号骑手接单数%d 完成数%d 超时数%d\n",i,rid[i].receive,rid[i].achieve,rid[i].overtime);
-		printf("\n");
+
 	}
 }
-void destory(){
+
+void deletelist(int menunum){//订单送到时删除该订单 
+	Menu *tmp,*current,*previous;
+	current=rid[menu[menunum].underline].waitlist; 
+	for(;*current!=menu[menunum];current=current->nextmenu){//寻找到要删除的订单 
+		previous=current;
+	}
+	tmp=current;
+	current=current->nextmenu;
+	previous->nextmenu=current;
+	free(tmp);
+}
+
+void destory(){//破产时调用？ 
 	int i;
 	Menu *tmp,*current;
 	for(;rid[i].exist!=0;i++){//释放骑手订单链表 
 		current=rid[i].waitptr;
 		while(current!=NULL){
 			tmp=current;
-			current=current->waitlist;
+			current=current->nextmenu;
 			free(tmp);
 		}
 	}

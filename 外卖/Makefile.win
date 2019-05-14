@@ -1,11 +1,11 @@
 # Project: Project1
 # Makefile created by Dev-C++ 5.11
 
-CPP      = g++.exe -D__DEBUG__
+CPP      = c++.exe -D__DEBUG__
 CC       = gcc.exe -D__DEBUG__
 WINDRES  = windres.exe
-OBJ      = main.o menu.o point.o controller.o message.o rider.o tools.o
-LINKOBJ  = main.o menu.o point.o controller.o message.o rider.o tools.o
+OBJ      = main.o menu.o point.o controller.o message.o rider.o tools.o list.o
+LINKOBJ  = main.o menu.o point.o controller.o message.o rider.o tools.o list.o
 LIBS     = -L"D:/Dev-Cpp/MinGW64/lib" -L"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -g3 -g3
 INCS     = -I"D:/Dev-Cpp/MinGW64/include" -I"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"D:/Dev-Cpp/MinGW64/include" -I"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
@@ -44,3 +44,6 @@ rider.o: rider.cpp
 
 tools.o: tools.cpp
 	$(CPP) -c tools.cpp -o tools.o $(CXXFLAGS)
+
+list.o: list.cpp
+	$(CPP) -c list.cpp -o list.o $(CXXFLAGS)
